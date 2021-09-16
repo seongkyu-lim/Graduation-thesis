@@ -1,0 +1,7 @@
+
+
+train : /yolov5/data/images/train
+val : /yolov5/data/images/valid
+
+nc : 4
+names : ['home', 'away', 'referee', 'ball']
