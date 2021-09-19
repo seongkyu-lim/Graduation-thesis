@@ -1,0 +1,25 @@
+train : /yolov5/data/images/train
+
+nc : 22
+names : ['dog','person'
+,'cat'
+,'tv'
+,'car'
+,'meatballs'
+,'marinara sauce'
+,'tomato soup'
+,'chicken noodle soup'
+,'french onion soup'
+,'chicken breast'
+,'ribs'
+,'pulled pork'
+,'hamburger'
+,'cavity'
+,'away'
+,'home'
+,'refree'
+,'ball'
+,'away_keeper'
+,'refere'
+,'home_keeper'
+]
