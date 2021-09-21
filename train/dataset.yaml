@@ -1,4 +1,5 @@
-train : /yolov5/data/images/train
+train : /content/yolov5/data/images/train
+val : /content/yolov5/data/images/valid
 
 nc : 22
 names : ['dog','person'
