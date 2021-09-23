@@ -1,8 +1,9 @@
 train : /content/yolov5/data/images/train
 val : /content/yolov5/data/images/valid
 
-nc : 22
-names : ['dog','person'
+nc : 23
+names : ['dog',
+'person'
 ,'cat'
 ,'tv'
 ,'car'
@@ -16,11 +17,12 @@ names : ['dog','person'
 ,'pulled pork'
 ,'hamburger'
 ,'cavity'
+,'ㅁㅈ묘'
 ,'away'
 ,'home'
-,'refree'
+,'referee'
 ,'ball'
-,'away_keeper'
-,'refere'
 ,'home_keeper'
+,'bvall'
+,'away_keeper'
 ]
