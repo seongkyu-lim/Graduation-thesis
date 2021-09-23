@@ -1,46 +1,53 @@
+"""
+Simple app to upload an image via a web form 
+and view the inference results on the image in the browser.
+"""
+import argparse
 import io
-import json
-
-from torchvision import models
-import torchvision.transforms as transforms
+import os
 from PIL import Image
-from flask import Flask, jsonify, request
 
+import torch
+from flask import Flask, render_template, request, redirect
 
 app = Flask(__name__)
-imagenet_class_index = json.load(
-    open('<PATH/TO/.json/FILE>/imagenet_class_index.json'))
-model = models.densenet121(pretrained=True)
-model.eval()
 
 
-def transform_image(image_bytes):
-    my_transforms = transforms.Compose([transforms.Resize(255),
-                                        transforms.CenterCrop(224),
-                                        transforms.ToTensor(),
-                                        transforms.Normalize(
-                                            [0.485, 0.456, 0.406],
-                                            [0.229, 0.224, 0.225])])
-    image = Image.open(io.BytesIO(image_bytes))
-    return my_transforms(image).unsqueeze(0)
-
-
-def get_prediction(image_bytes):
-    tensor = transform_image(image_bytes=image_bytes)
-    outputs = model.forward(tensor)
-    _, y_hat = outputs.max(1)
-    predicted_idx = str(y_hat.item())
-    return imagenet_class_index[predicted_idx]
-
-
-@app.route('/predict', methods=['POST'])
+@app.route("/", methods=["GET", "POST"])
 def predict():
-    if request.method == 'POST':
-        file = request.files['file']
+    if request.method == "POST":
+        if "file" not in request.files:
+            return redirect(request.url)
+        file = request.files["file"]
+        if not file:
+            return
+
         img_bytes = file.read()
-        class_id, class_name = get_prediction(image_bytes=img_bytes)
-        return jsonify({'class_id': class_id, 'class_name': class_name})
+        img = Image.open(io.BytesIO(img_bytes))
+        results = model(img, size=640)
+
+        # for debugging
+        # data = results.pandas().xyxy[0].to_json(orient="records")
+        # return data
+
+        results.render()  # updates results.imgs with boxes and labels
+        for img in results.imgs:
+            img_base64 = Image.fromarray(img)
+            img_base64.save("static/image0.jpg", format="JPEG")
+        return redirect("static/image0.jpg")
+
+    return render_template("index.html")
 
 
-if __name__ == '__main__':
-    app.run()
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Flask app exposing yolov5 models")
+    parser.add_argument("--port", default=5000, type=int, help="port number")
+    args = parser.parse_args()
+
+    model = torch.hub.load(
+        "ultralytics/yolov5", "yolov5s", pretrained=True, force_reload=True
+    ).autoshape()  # force_reload = recache latest code
+    model.eval()
+    # debug=True causes Restarting with stat
+    app.run(host="0.0.0.0", port=args.port)
