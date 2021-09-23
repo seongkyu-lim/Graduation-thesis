@@ -13,11 +13,12 @@ ribs
 pulled pork
 hamburger
 cavity
+ㅁㅈ묘
 away
 home
-refree
+referee
 ball
-away_keeper
-refere
 home_keeper
-home_jkeeper
+bvall
+away_keeper
+
