@@ -24,7 +24,6 @@ def predict():
 
         img_bytes = file.read()
         img = Image.open(io.BytesIO(img_bytes))
-        model = None
         results = model(img, size=640)
 
         # for debugging
